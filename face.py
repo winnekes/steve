@@ -1,33 +1,102 @@
 import pygame
 from itertools import cycle
+import random
+import math
 
-TILE_SIZE = 40
-SCREEN_SIZE = pygame.Rect((0, 0, 21 * TILE_SIZE, 8 * TILE_SIZE))
+# SCREEN_SIZE = pygame.Rect((0, 0, 480, 320))
+PIXEL_SCALE = 20
+DECAY_SIZE = 10
 
+pygame.init()
 
 class Expression(pygame.sprite.Sprite):
+    def retro_color(self, color, variation=10, offset=0):
+        return [max(0, min(255, x+random.randint(0, variation)+offset)) for x in color]
+
+    def get_offset(self, x, y, width, height):
+        offset = -DECAY_SIZE
+        corner = False
+        if x <= DECAY_SIZE:
+            corner = True
+            offset += x
+        if x >= width - DECAY_SIZE:
+            corner = True
+            offset += width - x
+        if y <= DECAY_SIZE:
+            if corner:
+                offset = -2*DECAY_SIZE + math.sqrt(x*x + y*y)
+            else:
+                offset += y
+        if y >= height - DECAY_SIZE:
+            if corner:
+                offset = -2*DECAY_SIZE + math.sqrt(x*x + y*y)
+            else:
+                offset += height - y
+
+        return 0 #min(offset*5,0) if x < DECAY_SIZE or y < DECAY_SIZE or x > width - DECAY_SIZE or y > height - DECAY_SIZE else 0
+
     def __init__(self, data):
         super().__init__()
-        self.image = pygame.Surface((len(data[0]), len(data)))
+        self.image = pygame.Surface((len(data[0]) * PIXEL_SCALE, len(data) * PIXEL_SCALE))
         x = y = 0
+        random.seed(0)
         for row in data:
             for col in row:
-                if col == "O":
-                    self.image.set_at((x, y), pygame.Color('green'))
+                for i in range(PIXEL_SCALE):
+                    for j in range(PIXEL_SCALE):
+                        offset = self.get_offset(x*PIXEL_SCALE+i, y*PIXEL_SCALE+j, len(data[0]) * PIXEL_SCALE, len(data) * PIXEL_SCALE)
+                        self.image.set_at((x*PIXEL_SCALE+i, y*PIXEL_SCALE+j), pygame.Color(self.retro_color([25, 26, 22], offset=offset)) if col == "O" else pygame.Color(self.retro_color([130, 220, 170],offset=offset)))
                 x += 1
             y += 1
             x = 0
-        self.image = pygame.transform.scale(self.image, (TILE_SIZE * len(data[0]), TILE_SIZE * len(data)))
+        screenSize = pygame.display.Info()
+        self.image = pygame.transform.scale(self.image, (screenSize.current_w, screenSize.current_h))
         self.rect = self.image.get_rect()
+
+
+
+DEAD = Expression([
+    "                     ",
+    "                     ",
+    "                     ",
+    "   O   O     O   O   ",
+    "    O O       O O    ",
+    "     O         O     ",
+    "    O O       O O    ",
+    "   O   O     O   O   ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+])
 
 
 REGULAR = Expression([
     "                     ",
     "                     ",
+    "                     ",
+    "                     ",
     "    OOOO     OOOO    ",
     "   OOOOOO   OOOOOO   ",
     "   OOOOOO   OOOOOO   ",
     "    OOOO     OOOO    ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+])
+
+SHOCKED = Expression([
+    "                     ",
+    "                     ",
+    "                     ",
+    "    OOO       OOO    ",
+    "   O   O     O   O   ",
+    "   O   O     O   O   ",
+    "   O   O     O   O   ",
+    "   O   O     O   O   ",
+    "    OOO       OOO    ",
+    "                     ",
     "                     ",
     "                     ",
 ])
@@ -35,10 +104,30 @@ REGULAR = Expression([
 QUESTION = Expression([
     "                     ",
     "                     ",
+    "                     ",
+    "                     ",
     "    OOOO             ",
     "   OOOOOO    OOOO    ",
     "   OOOOOO   OOOOOO   ",
     "    OOOO     OOOO    ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+])
+
+
+HAPPY = Expression([
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "    OOOO     OOOO    ",
+    "   O    O   O    O   ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
     "                     ",
     "                     ",
 ])
@@ -49,31 +138,76 @@ SAD = Expression([
     "                     ",
     "                     ",
     "                     ",
+    "                     ",
+    "                     ",
     "   OOOOOO   OOOOOO   ",
+    "                     ",
+    "                     ",
     "                     ",
     "                     ",
 ])
 
 
-def start_face():
-    pygame.init()
-    screen = pygame.display.set_mode(SCREEN_SIZE.size)
+SUSPICIOUS = Expression([
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "   OOOOOO   OOOOOO   ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+])
+
+
+def translation_expression(expression):
+    print(expression)
+    if expression == "be regular":
+        return REGULAR
+    if expression in ["be sad", "goodnight", "goodbye"]:
+        return SAD
+    if expression in ["be happy", "hi", "hello", "hi monkey"]:
+        return HAPPY
+    if expression in ["do you smell it", "are you even working?"]:
+        return SUSPICIOUS
+    if expression in ["play Dead Steve"]:
+        return DEAD
+    if expression == "oh my god":
+        return SHOCKED
+
+    return QUESTION
+
+
+def start_face(queue):
+    pygame.mouse.set_visible(0)
+    screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
     timer = pygame.time.Clock()
-    expressions = cycle([REGULAR, QUESTION, REGULAR, QUESTION, SAD])
-    current = next(expressions)
+    expressions = [REGULAR, QUESTION, SHOCKED, SUSPICIOUS, HAPPY, SAD]
+    current = REGULAR
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
-    while True:
-
+    running = True
+    while running:
         for e in pygame.event.get():
-            if e.type == pygame.QUIT:
-                return
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-                return
-            if e.type == pygame.USEREVENT:
-                current = next(expressions)
+            if e.type == pygame.K_ESCAPE or e.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+            if e.type == pygame.KEYDOWN:
+                current = random.choice(expressions)
+            if e.type == pygame.MOUSEBUTTONDOWN:
+                current = SHOCKED
+            if e.type == pygame.KEYUP or e.type == pygame.MOUSEBUTTONUP:
+                current = REGULAR
+            # if e.type == pygame.USEREVENT:
+            #     current = next(expressions)
 
-        screen.fill((30, 30, 30))
+        if queue.empty() is False:
+            current = translation_expression(queue.get())
+
         screen.blit(current.image, current.rect)
         timer.tick(60)
         pygame.display.update()
