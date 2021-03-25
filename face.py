@@ -2,8 +2,9 @@ import pygame
 from itertools import cycle
 import random
 import math
+import sys
 
-# SCREEN_SIZE = pygame.Rect((0, 0, 480, 320))
+
 PIXEL_SCALE = 20
 DECAY_SIZE = 10
 
@@ -65,6 +66,21 @@ DEAD = Expression([
     "    O O       O O    ",
     "   O   O     O   O   ",
     "                     ",
+    "                     ",
+    "                     ",
+    "                     ",
+])
+
+MUSIC = Expression([
+    "                     ",
+    "                     ",
+    "                     ",
+    "       OOOOOOOOOO    ",
+    "       OO     OO     ",
+    "       OO     OO     ",
+    "       OO     OO     ",
+    "     OOOO   OOOO     ",
+    "     OOO    OOO      ",
     "                     ",
     "                     ",
     "                     ",
@@ -178,25 +194,26 @@ def translation_expression(expression):
         return DEAD
     if expression == "oh my god":
         return SHOCKED
+    if expression == "music":
+        return MUSIC
 
     return QUESTION
 
 
-def start_face(queue):
+def start_face(expressionsQueue):
     pygame.mouse.set_visible(0)
-    screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode()
     timer = pygame.time.Clock()
     expressions = [REGULAR, QUESTION, SHOCKED, SUSPICIOUS, HAPPY, SAD]
     current = REGULAR
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
-    running = True
-    while running:
+    while True:
         for e in pygame.event.get():
-            if e.type == pygame.K_ESCAPE or e.type == pygame.QUIT:
-                running = False
-                pygame.quit()
             if e.type == pygame.KEYDOWN:
+                if e.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
                 current = random.choice(expressions)
             if e.type == pygame.MOUSEBUTTONDOWN:
                 current = SHOCKED
@@ -205,8 +222,8 @@ def start_face(queue):
             # if e.type == pygame.USEREVENT:
             #     current = next(expressions)
 
-        if queue.empty() is False:
-            current = translation_expression(queue.get())
+        if expressionsQueue.empty() is False:
+            current = translation_expression(expressionsQueue.get())
 
         screen.blit(current.image, current.rect)
         timer.tick(60)
