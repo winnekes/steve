@@ -1,26 +1,25 @@
-from dotenv import load_dotenv
-
-load_dotenv()
-
 import multiprocessing
 import threading
-
 import listener
+import time
 from face import start_face
+from dotenv import load_dotenv
+load_dotenv()
 from controller import start_controller
 
 
 def main():
-    load_dotenv()
     expressionsQueue = multiprocessing.Queue()
     commandsQueue = multiprocessing.Queue()
 
+    faceThread = threading.Thread(target=start_face, args=(expressionsQueue,))
     controlThread = threading.Thread(target=start_controller, args=(commandsQueue, expressionsQueue,))
+
+    faceThread.start()
     controlThread.start()
 
-    faceThread = threading.Thread(target=start_face, args=(expressionsQueue,))
-    faceThread.start()
     while True:
+        time.sleep(1)
         listener.listen(commandsQueue)
 
 
