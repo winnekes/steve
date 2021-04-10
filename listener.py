@@ -1,9 +1,11 @@
 import speech_recognition as sr
+import time
+
 
 r = sr.Recognizer()
 
 
-def listen(commandsQueue):
+def listen(commands_queue):
     try:
         with sr.Microphone() as m:
             r.adjust_for_ambient_noise(m)
@@ -11,7 +13,7 @@ def listen(commandsQueue):
             audio = r.listen(m, phrase_time_limit=5)
             print("Parsing")
             command = r.recognize_google(audio)
-            commandsQueue.put(command)
+            commands_queue.put(command)
             print("I think you said: " + command)
 
     except sr.UnknownValueError:
@@ -19,3 +21,10 @@ def listen(commandsQueue):
 
     except sr.RequestError as e:
         print("I don't feel so good, t-t-try again later; {0}".format(e))
+
+
+def start_listener(commands_queue):
+
+    while True:
+        listen(commands_queue)
+        time.sleep(.1)

@@ -1,7 +1,6 @@
 import multiprocessing
 import threading
-import listener
-import time
+from listener import start_listener
 from face import start_face
 from dotenv import load_dotenv
 load_dotenv()
@@ -14,13 +13,14 @@ def main():
 
     faceThread = threading.Thread(target=start_face, args=(expressionsQueue,))
     controlThread = threading.Thread(target=start_controller, args=(commandsQueue, expressionsQueue,))
+    listenerThread = threading.Thread(target=start_listener, args=(commandsQueue,))
+
+    controlThread.setDaemon(True)
+    listenerThread.setDaemon(True)
 
     faceThread.start()
     controlThread.start()
-
-    while True:
-        time.sleep(1)
-        listener.listen(commandsQueue)
+    listenerThread.start()
 
 
 if __name__ == "__main__":
