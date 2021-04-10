@@ -7,8 +7,6 @@ PIXEL_SCALE = 20
 DECAY_SIZE = 10
 
 
-
-
 class Expression(pygame.sprite.Sprite):
     def retro_color(self, color, variation=10, offset=0):
         return [max(0, min(255, x+random.randint(0, variation)+offset)) for x in color]
@@ -45,13 +43,16 @@ class Expression(pygame.sprite.Sprite):
             for col in row:
                 for i in range(PIXEL_SCALE):
                     for j in range(PIXEL_SCALE):
-                        offset = self.get_offset(x*PIXEL_SCALE+i, y*PIXEL_SCALE+j, len(data[0]) * PIXEL_SCALE, len(data) * PIXEL_SCALE)
+                        offset = self.get_offset(x*PIXEL_SCALE+i, y*PIXEL_SCALE+j, len(data) * PIXEL_SCALE, len(data) * PIXEL_SCALE)
+                        if i == 0 or i == PIXEL_SCALE - 1 or j == 0 or j == PIXEL_SCALE - 1:
+                            self.image.set_at((x*PIXEL_SCALE+i, y*PIXEL_SCALE+j), pygame.Color(self.retro_color([130, 220, 170],offset=7)))
+                            continue
                         self.image.set_at((x*PIXEL_SCALE+i, y*PIXEL_SCALE+j), pygame.Color(self.retro_color([25, 26, 22], offset=offset)) if col == "O" else pygame.Color(self.retro_color([130, 220, 170],offset=offset)))
                 x += 1
             y += 1
             x = 0
         screenSize = pygame.display.Info()
-        self.image = pygame.transform.scale(self.image, (screenSize.current_w, screenSize.current_h))
+        self.image = pygame.transform.scale(self.image, (480, 320))
         self.rect = self.image.get_rect()
 
 
