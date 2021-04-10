@@ -2,5 +2,6 @@
 
 ## TODO
 
-- [ ]  Add startup pm2 script on RPI
-- [ ] Refactor
+- [x] Add startup pm2 script on RPI
+- [ ] Mood system: Finite state machine
+- [ ] Expressions and commands: refactor
