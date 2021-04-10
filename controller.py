@@ -4,25 +4,27 @@ from modules.spotify import play_song
 
 def start_controller(commandsQueue, expressionsQueue):
     while True:
-        time.sleep(1)
         if commandsQueue.empty() is False:
             command = commandsQueue.get().lower()
-            if isExpression(command):
+            if is_expression(command):
                 expressionsQueue.put(command)
-            if isMusic(command):
+            if is_music(command):
                 title = command[5:]
+                source = "playlist" if "playlist" in command else "track"
                 print(title)
-                success, message = play_song(title, source="track")
+                success, message = play_song(title, source=source)
+                print(success)
+                print(message)
                 if success:
                     expressionsQueue.put("music")
                 else:
-                    expressionsQueue.put("unknown")
+                    expressionsQueue.put("play dead steve")
                 print(success)
+        time.sleep(.1)
 
-
-
-def isExpression(command):
+def is_expression(command):
     return True
 
-def isMusic(command):
+
+def is_music(command):
     return command.startswith("play ")
