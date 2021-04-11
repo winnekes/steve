@@ -5,3 +5,4 @@
 - [x] Add startup pm2 script on RPI
 - [ ] Mood system: Finite state machine
 - [ ] Expressions and commands: refactor
+- [ ] Investigate very slow cold start
