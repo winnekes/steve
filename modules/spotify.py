@@ -2,16 +2,21 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import os
 
-
 scope = "user-read-playback-state,user-modify-playback-state"
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(),
                           auth_manager=spotipy.SpotifyOAuth(scope=scope, cache_path="./caches/cache.txt"))
 
-print(spotify.devices())
+
+def get_device_id():
+    devices = spotify.devices()
+    print(devices)
+    for device in devices["devices"]:
+        if device["name"] == os.getenv("SPOTIPY_DEVICE_NAME"):
+            return device["id"]
 
 
 def play_song(query, source="track"):
-    device_id = os.getenv("SPOTIPY_DEVICE_ID")
+    device_id = get_device_id()
     try:
         results = spotify.search(q=query, type=source, limit=1)
 

@@ -28,7 +28,7 @@ def translation_expression(expression):
 
 def start_face(expressionsQueue):
     pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
-    screen = pygame.display.set_mode((480,320), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((480,320), pygame.RESIZABLE)
     allExpressions = [expressions.REGULAR, expressions.QUESTION, expressions.SHOCKED, expressions.SUSPICIOUS, expressions.HAPPY, expressions.SAD]
     current = expressions.REGULAR
 
