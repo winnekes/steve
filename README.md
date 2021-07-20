@@ -3,6 +3,6 @@
 ## TODO
 
 - [x] Add startup pm2 script on RPI
+- [x] Investigate very slow cold start
+- [x] Expressions and commands: refactor
 - [ ] Mood system: Finite state machine
-- [ ] Expressions and commands: refactor
-- [ ] Investigate very slow cold start
