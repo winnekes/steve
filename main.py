@@ -1,10 +1,11 @@
+from dotenv import load_dotenv
+
+load_dotenv()
 import multiprocessing
 import threading
 from listener import start_listener
 from face import start_face
-from dotenv import load_dotenv
-
-load_dotenv()
+from modules.mood import start_mood_controller
 from controller import start_controller
 
 
@@ -15,6 +16,7 @@ def main():
     face_thread = threading.Thread(target=start_face, args=(expressions_queue,))
     control_thread = threading.Thread(target=start_controller, args=(commands_queue, expressions_queue,))
     listener_thread = threading.Thread(target=start_listener, args=(commands_queue,))
+    mood_thread = threading.Thread(target=start_mood_controller, args=(commands_queue, expressions_queue,))
 
     control_thread.setDaemon(True)
     listener_thread.setDaemon(True)
