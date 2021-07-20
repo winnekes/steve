@@ -1,8 +1,7 @@
 import pygame
 import random
 import sys
-import time
-
+import os
 import expressions
 
 
@@ -26,10 +25,12 @@ def translation_expression(expression):
     return expressions.QUESTION
 
 
-def start_face(expressionsQueue):
-    pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
-    screen = pygame.display.set_mode((480,320), pygame.RESIZABLE)
-    allExpressions = [expressions.REGULAR, expressions.QUESTION, expressions.SHOCKED, expressions.SUSPICIOUS, expressions.HAPPY, expressions.SAD]
+def start_face(expressions_queue):
+    pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
+    screen = pygame.display.set_mode((480, 320),
+                                     pygame.RESIZABLE if os.getenv("FACE_SIZE") == "WINDOW" else pygame.FULLSCREEN)
+    allExpressions = [expressions.REGULAR, expressions.QUESTION, expressions.SHOCKED, expressions.SUSPICIOUS,
+                      expressions.HAPPY, expressions.SAD]
     current = expressions.REGULAR
 
     while True:
@@ -45,8 +46,8 @@ def start_face(expressionsQueue):
             if e.type == pygame.KEYUP or e.type == pygame.MOUSEBUTTONUP:
                 current = expressions.REGULAR
 
-        if expressionsQueue.empty() is False:
-            current = translation_expression(expressionsQueue.get())
+        if expressions_queue.empty() is False:
+            current = translation_expression(expressions_queue.get())
 
         timer = pygame.time.Clock()
         timer.tick()

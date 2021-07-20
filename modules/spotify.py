@@ -4,7 +4,7 @@ import os
 
 scope = "user-read-playback-state,user-modify-playback-state"
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(),
-                          auth_manager=spotipy.SpotifyOAuth(scope=scope, cache_path="./caches/cache.txt"))
+                          auth_manager=spotipy.SpotifyOAuth(scope=scope))
 
 
 def get_device_id():
