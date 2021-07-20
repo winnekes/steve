@@ -35,7 +35,6 @@ def start_face(expressions_queue):
 
     while True:
         for e in pygame.event.get():
-            print(e)
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_ESCAPE:
                     pygame.quit()
