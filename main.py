@@ -3,9 +3,9 @@ import threading
 from listener import start_listener
 from face import start_face
 from dotenv import load_dotenv
-from controller import start_controller
 
 load_dotenv()
+from controller import start_controller
 
 
 def main():
