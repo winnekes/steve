@@ -1,9 +1,9 @@
 import speech_recognition as sr
 import time
 
-
 r = sr.Recognizer()
 
+# only listen via google if steve is called
 
 def listen(commands_queue):
     try:
@@ -22,9 +22,7 @@ def listen(commands_queue):
     except sr.RequestError as e:
         print("I don't feel so good, t-t-try again later; {0}".format(e))
 
-
 def start_listener(commands_queue):
-
     while True:
         listen(commands_queue)
         time.sleep(.1)

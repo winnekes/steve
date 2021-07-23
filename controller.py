@@ -1,7 +1,6 @@
 import time
 from modules.spotify import play_song
 
-
 def start_controller(commands_queue, expressions_queue):
     while True:
         if commands_queue.empty() is False:
@@ -18,14 +17,12 @@ def start_controller(commands_queue, expressions_queue):
                 if success:
                     expressions_queue.put("music")
                 else:
-                    expressions_queue.put("play dead steve")
+                    expressions_queue.put("bang bang")
                 print(success)
         time.sleep(.1)
 
-
 def is_expression(command):
     return True
-
 
 def is_music(command):
     return command.startswith("play ")

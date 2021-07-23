@@ -4,7 +4,6 @@ import sys
 import os
 import expressions
 
-
 def translation_expression(expression):
     print(expression)
     if expression == "be regular":
@@ -15,7 +14,7 @@ def translation_expression(expression):
         return expressions.HAPPY
     if expression in ["do you smell it", "are you even working?"]:
         return expressions.SUSPICIOUS
-    if expression in ["play dead steve"]:
+    if expression in ["bang bang"]:
         return expressions.DEAD
     if expression == "oh my god":
         return expressions.SHOCKED
@@ -23,7 +22,6 @@ def translation_expression(expression):
         return expressions.MUSIC
 
     return expressions.QUESTION
-
 
 def start_face(expressions_queue):
     pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
