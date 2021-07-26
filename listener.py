@@ -15,7 +15,7 @@ def listen(actively_listening, set_actively_listening, commands_queue):
                 command = r.recognize_sphinx(audio, keyword_entries=[("steve", 0)]).strip().lower()
 
                 if command == "steve":
-                    commands_queue.put("listening")
+                    commands_queue.put("now listening")
                     set_actively_listening(True)
 
             if actively_listening is True:
