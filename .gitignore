@@ -1,9 +1,7 @@
-venv
+.vscode
 .idea
+.history
+
+node_modules/
+
 .env
-.cache
-modules/.cache
-cache.txt
-modules/cache.txt
-__pycache__
-modules/__pycache__
